@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -324,7 +324,7 @@
     <div class="container">
         <div class="main-content">
             <div class="header">
-                <h1>🌟 Unsere gemeinsame Woche 🌟</h1>
+                <h1>🌟 Mein Wochenplaner 🌟</h1>
                 <div class="week-info">
                     <div class="week-dates" id="weekDates"></div>
                     <div>
@@ -607,36 +607,15 @@
         }
 
         function saveData() {
-            // Da localStorage nicht verfügbar ist, speichern wir nur in der aktuellen Sitzung
-            console.log('Daten gespeichert:', weekData);
+  localStorage.setItem("weekData", JSON.stringify(weekData));
         }
 
         function loadData() {
-            // Beispiel-Daten für Demo-Zwecke
-            weekData.days.monday.activities = [
-                { text: 'Zusammen Wochenplan machen', completed: false },
-                { text: 'Lieblingsspiel spielen', completed: false }
-            ];
-            weekData.days.tuesday.homework = [
-                { text: 'Mathe-Hausaufgaben', completed: false }
-            ];
-            weekData.days.wednesday.activities = [
-                { text: 'Gemeinsam kochen', completed: false }
-            ];
-            weekData.days.thursday.notes = 'Papa abholen um 7:30 Uhr';
-            weekData.days.friday.activities = [
-                { text: 'Freunde treffen', completed: false }
-            ];
-            weekData.days.saturday.activities = [
-                { text: 'Ausschlafen', completed: false },
-                { text: 'Familienzeit', completed: false }
-            ];
-            weekData.days.sunday.activities = [
-                { text: 'Entspannen', completed: false }
-            ];
-            weekData.days.sunday.notes = 'Vorbereitung für neue Woche';
-            
-            renderPlanner();
+  const storedData = localStorage.getItem("weekData");
+  if (storedData) {
+    weekData = JSON.parse(storedData);
+  }
+  renderPlanner();
         }
 
         // Initialisierung beim Laden der Seite
