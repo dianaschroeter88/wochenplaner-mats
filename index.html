@@ -320,6 +320,15 @@
     </style>
 </head>
 <body>
+
+<script>
+  const password = prompt("🔒 Bitte Passwort eingeben:");
+  if (password !== "meinpasswort123") {
+    document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red;'>Zugriff verweigert ❌</h2>";
+    throw new Error("Falsches Passwort");
+  }
+</script>
+
     <div class="container">
         <div class="main-content">
             <div class="header">
@@ -375,6 +384,11 @@
                 <span class="tip-icon">🎨</span>
                 <strong>Kreativität:</strong> Nutze die Sticker und Notizen für deine Ideen
             </div>
+            
+            <div class="tip-item">
+                <span class="tip-icon">🏠</span>
+                <strong>Wochenende:</strong> Zeit für Familie, Erholung und Spaß!
+            </div>
         </div>
     </div>
 
@@ -386,7 +400,10 @@
                 monday: { activities: [], homework: [], notes: '', stickers: [] },
                 tuesday: { activities: [], homework: [], notes: '', stickers: [] },
                 wednesday: { activities: [], homework: [], notes: '', stickers: [] },
-                thursday: { activities: [], homework: [], notes: '', stickers: [] }
+                thursday: { activities: [], homework: [], notes: '', stickers: [] },
+                friday: { activities: [], homework: [], notes: '', stickers: [] },
+                saturday: { activities: [], homework: [], notes: '', stickers: [] },
+                sunday: { activities: [], homework: [], notes: '', stickers: [] }
             }
         };
 
@@ -394,14 +411,20 @@
             monday: 'Montag',
             tuesday: 'Dienstag', 
             wednesday: 'Mittwoch',
-            thursday: 'Donnerstag'
+            thursday: 'Donnerstag',
+            friday: 'Freitag',
+            saturday: 'Samstag',
+            sunday: 'Sonntag'
         };
 
         const dayColors = {
             monday: 'linear-gradient(135deg, #ff6b6b, #ee5a24)',
             tuesday: 'linear-gradient(135deg, #5f27cd, #341f97)',
             wednesday: 'linear-gradient(135deg, #00d2d3, #54a0ff)',
-            thursday: 'linear-gradient(135deg, #2ed573, #7bed9f)'
+            thursday: 'linear-gradient(135deg, #2ed573, #7bed9f)',
+            friday: 'linear-gradient(135deg, #ff9ff3, #f368e0)',
+            saturday: 'linear-gradient(135deg, #ffa502, #ff6348)',
+            sunday: 'linear-gradient(135deg, #3742fa, #2f3542)'
         };
 
         const availableStickers = ['⭐', '🎉', '👍', '🏆', '🌟', '💪', '🎯', '✨'];
@@ -419,15 +442,15 @@
             const daysToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
             monday.setDate(today.getDate() + daysToMonday);
             
-            const thursday = new Date(monday);
-            thursday.setDate(monday.getDate() + 3);
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
             
             const formatDate = (date) => {
                 return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
             };
             
             document.getElementById('weekDates').textContent = 
-                `${formatDate(monday)} - ${formatDate(thursday)}`;
+                `${formatDate(monday)} - ${formatDate(sunday)}`;
         }
 
         function renderPlanner() {
@@ -446,6 +469,11 @@
             card.className = 'day-card';
             card.style.background = dayColors[dayKey];
             
+            // Für Wochenende andere Aktivitäten-Titel verwenden
+            const isWeekend = dayKey === 'saturday' || dayKey === 'sunday';
+            const activitiesTitle = isWeekend ? '🎮 Freizeit & Spaß' : '🎯 Aktivitäten & Pläne';
+            const homeworkTitle = isWeekend ? '📖 Lernen & Üben' : '📚 Hausaufgaben & Schule';
+            
             card.innerHTML = `
                 <div class="day-header">
                     <div class="day-name">${dayNames[dayKey]}</div>
@@ -453,24 +481,24 @@
                 </div>
                 
                 <div class="activities-section">
-                    <div class="section-title">🎯 Aktivitäten & Pläne</div>
+                    <div class="section-title">${activitiesTitle}</div>
                     <div class="activity-list" id="activities-${dayKey}">
                         ${renderActivities(dayData.activities, dayKey, 'activities')}
                     </div>
                     <div class="add-activity">
-                        <input type="text" class="activity-input" placeholder="Neue Aktivität..." 
+                        <input type="text" class="activity-input" placeholder="${isWeekend ? 'Neue Aktivität...' : 'Neue Aktivität...'}" 
                                onkeypress="handleEnter(event, '${dayKey}', 'activities')">
                         <button class="add-btn" onclick="addActivity('${dayKey}', 'activities')">+</button>
                     </div>
                 </div>
                 
                 <div class="activities-section">
-                    <div class="section-title">📚 Hausaufgaben & Schule</div>
+                    <div class="section-title">${homeworkTitle}</div>
                     <div class="activity-list" id="homework-${dayKey}">
                         ${renderActivities(dayData.homework, dayKey, 'homework')}
                     </div>
                     <div class="add-activity">
-                        <input type="text" class="activity-input" placeholder="Hausaufgabe..." 
+                        <input type="text" class="activity-input" placeholder="${isWeekend ? 'Lernen...' : 'Hausaufgabe...'}" 
                                onkeypress="handleEnter(event, '${dayKey}', 'homework')">
                         <button class="add-btn" onclick="addActivity('${dayKey}', 'homework')">+</button>
                     </div>
@@ -604,6 +632,17 @@
                 { text: 'Gemeinsam kochen', completed: false }
             ];
             weekData.days.thursday.notes = 'Papa abholen um 7:30 Uhr';
+            weekData.days.friday.activities = [
+                { text: 'Freunde treffen', completed: false }
+            ];
+            weekData.days.saturday.activities = [
+                { text: 'Ausschlafen', completed: false },
+                { text: 'Familienzeit', completed: false }
+            ];
+            weekData.days.sunday.activities = [
+                { text: 'Entspannen', completed: false }
+            ];
+            weekData.days.sunday.notes = 'Vorbereitung für neue Woche';
             
             renderPlanner();
         }
